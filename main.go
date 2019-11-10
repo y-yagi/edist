@@ -20,6 +20,15 @@ var cfg config
 
 type config struct {
 	AccessToken string `toml:"access_token"`
+	Editor      string `toml:"editor"`
+}
+
+func init() {
+	if !configure.Exist(cmd) {
+		cfg.AccessToken = ""
+		cfg.Editor = "vim"
+		configure.Save(cmd, cfg)
+	}
 }
 
 func main() {
@@ -134,8 +143,7 @@ func runEditGist(client *github.Client, ctx *context.Context, gistID string) int
 			return msg(err)
 		}
 
-		// TODO(y-yagi) Edit editor.
-		cmd := exec.Command("vim", tmpfile.Name())
+		cmd := exec.Command(cfg.Editor, tmpfile.Name())
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 
