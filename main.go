@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -65,7 +66,7 @@ func run() int {
 	}
 
 	ctx := context.Background()
-	client = buildClient(&ctx)
+	client, err = buildClient(&ctx)
 	if err != nil {
 		return msg(err)
 	}
@@ -81,16 +82,15 @@ func run() int {
 
 }
 
-func buildClient(ctx *context.Context) *github.Client {
-	if len(cfg.AccessToken) > 0 {
-		ts := oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: cfg.AccessToken},
-		)
-		tc := oauth2.NewClient(*ctx, ts)
-		return github.NewClient(tc)
+func buildClient(ctx *context.Context) (*github.Client, error) {
+	if len(cfg.AccessToken) == 0 {
+		return nil, errors.New("GitHub access token is not found. Please specify access token to config file.")
 	}
-
-	return github.NewClient(nil)
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: cfg.AccessToken},
+	)
+	tc := oauth2.NewClient(*ctx, ts)
+	return github.NewClient(tc), nil
 }
 
 func runEditConfig() int {
