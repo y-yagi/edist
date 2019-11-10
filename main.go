@@ -117,7 +117,7 @@ func runShowList(client *github.Client, ctx *context.Context, username string) i
 		for _, file := range gist.Files {
 			filenames = append(filenames, *file.Filename)
 		}
-		fmt.Printf("ID: %s files: %s\n", *gist.ID, arr.Join(filenames, " ,"))
+		fmt.Printf("ID: %s files: %s\n", *gist.ID, arr.Join(filenames, ", "))
 	}
 
 	return 0
