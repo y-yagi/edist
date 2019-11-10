@@ -53,8 +53,8 @@ func run() int {
 
 	flags := flag.NewFlagSet(cmd, flag.ExitOnError)
 	flags.BoolVar(&editConfig, "c", false, "Edit config.")
-	flags.StringVar(&showUserGists, "l", "", "Show list a user Gists.")
-	flags.StringVar(&gistID, "e", "", "Edit Gist that ID was specified.")
+	flags.StringVar(&showUserGists, "l", "", "Show list a `user` Gists.")
+	flags.StringVar(&gistID, "e", "", "Edit Gist that `ID` was specified.")
 	flags.Parse(os.Args[1:])
 
 	if editConfig {
