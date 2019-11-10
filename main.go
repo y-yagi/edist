@@ -154,8 +154,6 @@ func runEditGist(client *github.Client, ctx *context.Context, gistID string) int
 		dat, _ := ioutil.ReadFile(tmpfile.Name())
 		gFilename := github.GistFilename(*file.Filename)
 		files[gFilename] = github.GistFile{Filename: github.String(*file.Filename), Content: github.String(string(dat))}
-
-		tmpfile.Write([]byte(""))
 	}
 
 	input := &github.Gist{Files: files}
