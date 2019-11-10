@@ -79,9 +79,9 @@ func buildClient(ctx *context.Context) *github.Client {
 		)
 		tc := oauth2.NewClient(*ctx, ts)
 		return github.NewClient(tc)
-	} else {
-		return github.NewClient(nil)
 	}
+
+	return github.NewClient(nil)
 }
 
 func runEditConfig() int {
