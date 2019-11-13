@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/google/go-github/github"
 	"github.com/y-yagi/configure"
@@ -134,21 +135,22 @@ func runEditGist(client *github.Client, ctx *context.Context, gistID string) int
 		return msg(err)
 	}
 
-	tmpfile, err := ioutil.TempFile("", cmd)
+	dir, err := ioutil.TempDir("", cmd)
 	if err != nil {
 		return msg(err)
 	}
 
-	defer os.Remove(tmpfile.Name())
+	defer os.Remove(dir)
 
 	files := make(map[github.GistFilename]github.GistFile)
+	tmpfn := filepath.Join(dir, "tmpfile")
 
 	for _, file := range gist.Files {
-		if _, err := tmpfile.Write([]byte(*file.Content)); err != nil {
+		if err := ioutil.WriteFile(tmpfn, []byte(*file.Content), 0644); err != nil {
 			return msg(err)
 		}
 
-		cmd := exec.Command(cfg.Editor, tmpfile.Name())
+		cmd := exec.Command(cfg.Editor, tmpfn)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 
@@ -156,9 +158,7 @@ func runEditGist(client *github.Client, ctx *context.Context, gistID string) int
 			return msg(err)
 		}
 
-		dat, _ := ioutil.ReadFile(tmpfile.Name())
-		tmpfile.Truncate(0)
-		tmpfile.Seek(0, 0)
+		dat, _ := ioutil.ReadFile(tmpfn)
 		gFilename := github.GistFilename(*file.Filename)
 		files[gFilename] = github.GistFile{Filename: github.String(*file.Filename), Content: github.String(string(dat))}
 	}
