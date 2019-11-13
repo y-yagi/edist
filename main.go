@@ -162,7 +162,7 @@ func runEditGist(client *github.Client, ctx *context.Context, gistID string) int
 
 		newContent, _ := ioutil.ReadFile(tmpfn)
 
-		if bytes.Compare(oldContent, newContent) == 0 {
+		if bytes.Equal(oldContent, newContent) {
 			continue
 		}
 
