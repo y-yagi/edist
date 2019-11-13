@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"flag"
@@ -146,7 +147,8 @@ func runEditGist(client *github.Client, ctx *context.Context, gistID string) int
 	tmpfn := filepath.Join(dir, "tmpfile")
 
 	for _, file := range gist.Files {
-		if err := ioutil.WriteFile(tmpfn, []byte(*file.Content), 0644); err != nil {
+		oldContent := []byte(*file.Content)
+		if err := ioutil.WriteFile(tmpfn, oldContent, 0644); err != nil {
 			return msg(err)
 		}
 
@@ -158,9 +160,18 @@ func runEditGist(client *github.Client, ctx *context.Context, gistID string) int
 			return msg(err)
 		}
 
-		dat, _ := ioutil.ReadFile(tmpfn)
+		newContent, _ := ioutil.ReadFile(tmpfn)
+
+		if bytes.Compare(oldContent, newContent) == 0 {
+			continue
+		}
+
 		gFilename := github.GistFilename(*file.Filename)
-		files[gFilename] = github.GistFile{Filename: github.String(*file.Filename), Content: github.String(string(dat))}
+		files[gFilename] = github.GistFile{Filename: github.String(*file.Filename), Content: github.String(string(newContent))}
+	}
+
+	if len(files) == 0 {
+		return 0
 	}
 
 	input := &github.Gist{Files: files}
