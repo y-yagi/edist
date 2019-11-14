@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 
 	"github.com/google/go-github/github"
 	"github.com/y-yagi/configure"
@@ -19,7 +20,17 @@ import (
 
 const cmd = "edist"
 
-var cfg config
+var (
+	cfg config
+
+	// Command line flags.
+	showVersion bool
+	editConfig  bool
+	userName    string
+	gistID      string
+
+	version = "devel"
+)
 
 type config struct {
 	AccessToken string `toml:"access_token"`
@@ -32,10 +43,22 @@ func init() {
 		cfg.Editor = "vim"
 		configure.Save(cmd, cfg)
 	}
+
+	flag.BoolVar(&showVersion, "v", false, "print version number")
+	flag.BoolVar(&editConfig, "c", false, "Edit config.")
+	flag.StringVar(&userName, "l", "", "Show list a `user` Gists.")
+	flag.StringVar(&gistID, "e", "", "Edit Gist that `ID` was specified.")
+	flag.Usage = usage
 }
 
 func main() {
 	os.Exit(run())
+}
+
+func usage() {
+	fmt.Fprintf(os.Stderr, "Usage: %s [OPTIONS]\n\n", cmd)
+	fmt.Fprintln(os.Stderr, "OPTIONS:")
+	flag.PrintDefaults()
 }
 
 func msg(err error) int {
@@ -47,17 +70,15 @@ func msg(err error) int {
 }
 
 func run() int {
-	var editConfig bool
-	var showUserGists string
-	var gistID string
 	var client *github.Client
 	var err error
 
-	flags := flag.NewFlagSet(cmd, flag.ExitOnError)
-	flags.BoolVar(&editConfig, "c", false, "Edit config.")
-	flags.StringVar(&showUserGists, "l", "", "Show list a `user` Gists.")
-	flags.StringVar(&gistID, "e", "", "Edit Gist that `ID` was specified.")
-	flags.Parse(os.Args[1:])
+	flag.Parse()
+
+	if showVersion {
+		fmt.Printf("%s %s (runtime: %s)\n", cmd, version, runtime.Version())
+		return 0
+	}
 
 	if editConfig {
 		return runEditConfig()
@@ -73,12 +94,12 @@ func run() int {
 		return msg(err)
 	}
 
-	if len(showUserGists) > 0 {
-		return runShowList(client, &ctx, showUserGists)
+	if len(userName) > 0 {
+		return runShowList(client, &ctx)
 	} else if len(gistID) > 0 {
-		return runEditGist(client, &ctx, gistID)
+		return runEditGist(client, &ctx)
 	} else {
-		flags.PrintDefaults()
+		flag.Usage()
 		return 0
 	}
 
@@ -113,8 +134,8 @@ func runEditConfig() int {
 	return 0
 }
 
-func runShowList(client *github.Client, ctx *context.Context, username string) int {
-	gists, _, err := client.Gists.List(*ctx, username, nil)
+func runShowList(client *github.Client, ctx *context.Context) int {
+	gists, _, err := client.Gists.List(*ctx, userName, nil)
 	if err != nil {
 		return msg(err)
 	}
@@ -130,7 +151,7 @@ func runShowList(client *github.Client, ctx *context.Context, username string) i
 	return 0
 }
 
-func runEditGist(client *github.Client, ctx *context.Context, gistID string) int {
+func runEditGist(client *github.Client, ctx *context.Context) int {
 	gist, _, err := client.Gists.Get(*ctx, gistID)
 	if err != nil {
 		return msg(err)
