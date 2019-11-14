@@ -101,7 +101,11 @@ func run() int {
 	} else if len(gistID) > 0 {
 		return runEditGist(client, &ctx)
 	} else if len(newFilename) > 0 {
-		return runCreateGist(client, &ctx)
+		desc := ""
+		if len(flag.Args()) > 0 {
+			desc = flag.Args()[0]
+		}
+		return runCreateGist(client, &ctx, desc)
 	} else {
 		flag.Usage()
 		return 0
@@ -208,7 +212,7 @@ func runEditGist(client *github.Client, ctx *context.Context) int {
 	return 0
 }
 
-func runCreateGist(client *github.Client, ctx *context.Context) int {
+func runCreateGist(client *github.Client, ctx *context.Context, desc string) int {
 	dir, err := ioutil.TempDir("", cmd)
 	if err != nil {
 		return msg(err)
@@ -237,7 +241,7 @@ func runCreateGist(client *github.Client, ctx *context.Context) int {
 	gFilename := github.GistFilename(newFilename)
 	files[gFilename] = github.GistFile{Filename: github.String(newFilename), Content: github.String(string(content))}
 
-	input := &github.Gist{Files: files}
+	input := &github.Gist{Files: files, Description: github.String(desc)}
 	if _, _, err := client.Gists.Create(*ctx, input); err != nil {
 		return msg(err)
 	}
