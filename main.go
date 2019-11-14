@@ -26,8 +26,9 @@ var (
 	// Command line flags.
 	showVersion bool
 	editConfig  bool
-	userName    string
+	username    string
 	gistID      string
+	newFilename string
 
 	version = "devel"
 )
@@ -45,9 +46,10 @@ func init() {
 	}
 
 	flag.BoolVar(&showVersion, "v", false, "print version number")
-	flag.BoolVar(&editConfig, "c", false, "Edit config.")
-	flag.StringVar(&userName, "l", "", "Show list a `user` Gists.")
-	flag.StringVar(&gistID, "e", "", "Edit Gist that `ID` was specified.")
+	flag.BoolVar(&editConfig, "c", false, "cdit config.")
+	flag.StringVar(&username, "l", "", "show list a `user` Gists")
+	flag.StringVar(&newFilename, "n", "", "create a new Gist by `filename`")
+	flag.StringVar(&gistID, "e", "", "edit Gist that `ID` was specified")
 	flag.Usage = usage
 }
 
@@ -94,10 +96,12 @@ func run() int {
 		return msg(err)
 	}
 
-	if len(userName) > 0 {
+	if len(username) > 0 {
 		return runShowList(client, &ctx)
 	} else if len(gistID) > 0 {
 		return runEditGist(client, &ctx)
+	} else if len(newFilename) > 0 {
+		return runCreateGist(client, &ctx)
 	} else {
 		flag.Usage()
 		return 0
@@ -135,7 +139,7 @@ func runEditConfig() int {
 }
 
 func runShowList(client *github.Client, ctx *context.Context) int {
-	gists, _, err := client.Gists.List(*ctx, userName, nil)
+	gists, _, err := client.Gists.List(*ctx, username, nil)
 	if err != nil {
 		return msg(err)
 	}
@@ -199,6 +203,38 @@ func runEditGist(client *github.Client, ctx *context.Context) int {
 
 	input := &github.Gist{Files: files}
 	if _, _, err := client.Gists.Edit(*ctx, gistID, input); err != nil {
+		return msg(err)
+	}
+	return 0
+}
+
+func runCreateGist(client *github.Client, ctx *context.Context) int {
+	dir, err := ioutil.TempDir("", cmd)
+	if err != nil {
+		return msg(err)
+	}
+
+	defer os.RemoveAll(dir)
+
+	files := make(map[github.GistFilename]github.GistFile)
+
+	tmpfn := filepath.Join(dir, newFilename)
+
+	cmd := exec.Command(cfg.Editor, tmpfn)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+
+	if err := cmd.Run(); err != nil {
+		return msg(err)
+	}
+
+	content, _ := ioutil.ReadFile(tmpfn)
+
+	gFilename := github.GistFilename(newFilename)
+	files[gFilename] = github.GistFile{Filename: github.String(newFilename), Content: github.String(string(content))}
+
+	input := &github.Gist{Files: files}
+	if _, _, err := client.Gists.Create(*ctx, input); err != nil {
 		return msg(err)
 	}
 	return 0
