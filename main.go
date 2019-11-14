@@ -230,6 +230,10 @@ func runCreateGist(client *github.Client, ctx *context.Context) int {
 
 	content, _ := ioutil.ReadFile(tmpfn)
 
+	if len(string(content)) == 0 {
+		return 0
+	}
+
 	gFilename := github.GistFilename(newFilename)
 	files[gFilename] = github.GistFile{Filename: github.String(newFilename), Content: github.String(string(content))}
 
