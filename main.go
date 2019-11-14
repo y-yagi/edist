@@ -116,7 +116,7 @@ func buildClient(ctx *context.Context) (*github.Client, error) {
 	}
 
 	if len(accessToken) == 0 {
-		return nil, errors.New("GitHub access token is not found. Please specify access token to config file")
+		return nil, errors.New("GitHub access token is not found. Please specify access token to config file or `GITHUB_ACCESS_TOKEN` env")
 	}
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: cfg.AccessToken},
