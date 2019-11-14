@@ -162,7 +162,7 @@ func runEditGist(client *github.Client, ctx *context.Context) int {
 		return msg(err)
 	}
 
-	defer os.Remove(dir)
+	defer os.RemoveAll(dir)
 
 	files := make(map[github.GistFilename]github.GistFile)
 
