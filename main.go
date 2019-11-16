@@ -175,8 +175,7 @@ func runEditGist(client *github.Client, ctx *context.Context) int {
 	files := make(map[github.GistFilename]github.GistFile)
 
 	for _, file := range gist.Files {
-		ext := filepath.Ext(*file.Filename)
-		tmpfn := filepath.Join(dir, "tmpfile"+ext)
+		tmpfn := filepath.Join(dir, *file.Filename)
 
 		oldContent := []byte(*file.Content)
 		if err := ioutil.WriteFile(tmpfn, oldContent, 0644); err != nil {
