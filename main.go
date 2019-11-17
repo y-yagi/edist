@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/google/go-github/github"
 	"github.com/y-yagi/configure"
@@ -182,7 +183,10 @@ func runEditGist(client *github.Client, ctx *context.Context) int {
 			return msg(err)
 		}
 
-		cmd := exec.Command(cfg.Editor, tmpfn)
+		cmdWithArguments := strings.Split(cfg.Editor, " ")
+		cmdWithArguments = append(cmdWithArguments, tmpfn)
+
+		cmd := exec.Command(cmdWithArguments[0], cmdWithArguments[1:]...)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 
