@@ -7,6 +7,10 @@ github.com/google/go-github v17.0.0+incompatible h1:N0LgJ1j65A7kfXrZnUDaYCs/Sf4r
 github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+umXrS52loVEgC2AApnigrVQ=
 github.com/google/go-querystring v1.0.0 h1:Xkwi/a1rcvNg1PPYe5vI8GbeBY/jrVuDX5ASuANWTrk=
 github.com/google/go-querystring v1.0.0/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
+github.com/mattn/go-runewidth v0.0.6 h1:V2iyH+aX9C5fsYCpK60U8BYIvmhqxuOL3JZcqc1NB7k=
+github.com/mattn/go-runewidth v0.0.6/go.mod h1:H031xJmbD/WCDINGzjvQ9THkh0rPKHF+m2gUSrubnMI=
+github.com/olekukonko/tablewriter v0.0.3 h1:i0LBnzgiChAWHJYTQAZJDOgf8MNxAVYZJ2m63SIDimI=
+github.com/olekukonko/tablewriter v0.0.3/go.mod h1:YZeBtGzYYEsCHp2LST/u/0NDwGkRoBtmn1cIWCJiS6M=
 github.com/y-yagi/configure v0.2.0 h1:v27/4bRcJKQgrd4Yh9y9Fptoa15wuldazrjPBWCvKrM=
 github.com/y-yagi/configure v0.2.0/go.mod h1:BztcwSytGmEB/wRUn4z6kIQhYmCZvbXUGKWkWjuJGkg=
 github.com/y-yagi/goext v0.3.0 h1:RV/o/+FSP83KG07odww/7JwSe6EIkwBINqrby5m7EvE=
