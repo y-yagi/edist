@@ -11,8 +11,10 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/google/go-github/github"
+	"github.com/olekukonko/tablewriter"
 	"github.com/y-yagi/configure"
 	"github.com/y-yagi/goext/arr"
 	"golang.org/x/oauth2"
@@ -148,14 +150,24 @@ func runShowList(client *github.Client, ctx *context.Context) int {
 		return msg(err)
 	}
 
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"ID", "Desc", "Files"})
+	table.SetAutoWrapText(false)
+
 	for _, gist := range gists {
 		var filenames []string
+		var values = []string{}
+
+		values = append(values, *gist.ID)
+		values = append(values, *gist.Description)
 		for _, file := range gist.Files {
 			filenames = append(filenames, *file.Filename)
 		}
-		fmt.Printf("[ID]: %s [desc]: %s [files]: %s\n", *gist.ID, *gist.Description, arr.Join(filenames, ", "))
+		values = append(values, arr.Join(filenames, ", "))
+		table.Append(values)
 	}
 
+	table.Render()
 	return 0
 }
 
@@ -182,7 +194,10 @@ func runEditGist(client *github.Client, ctx *context.Context) int {
 			return msg(err)
 		}
 
-		cmd := exec.Command(cfg.Editor, tmpfn)
+		cmdWithArguments := strings.Split(cfg.Editor, " ")
+		cmdWithArguments = append(cmdWithArguments, tmpfn)
+
+		cmd := exec.Command(cmdWithArguments[0], cmdWithArguments[1:]...)
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 
