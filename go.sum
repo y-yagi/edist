@@ -19,6 +19,8 @@ github.com/y-yagi/configure v0.2.0 h1:v27/4bRcJKQgrd4Yh9y9Fptoa15wuldazrjPBWCvKr
 github.com/y-yagi/configure v0.2.0/go.mod h1:BztcwSytGmEB/wRUn4z6kIQhYmCZvbXUGKWkWjuJGkg=
 github.com/y-yagi/goext v0.3.0 h1:RV/o/+FSP83KG07odww/7JwSe6EIkwBINqrby5m7EvE=
 github.com/y-yagi/goext v0.3.0/go.mod h1:0OhjQ0asZ5akCui3QgCkDjNHHu8y37LJv2WX/CY24Sg=
+github.com/y-yagi/goext v0.4.0 h1:49OJwAG+lQSDikAYY6GWlmgOGbAaLuJKCugbmyTmwnM=
+github.com/y-yagi/goext v0.4.0/go.mod h1:0OhjQ0asZ5akCui3QgCkDjNHHu8y37LJv2WX/CY24Sg=
 golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e h1:bRhVy7zSSasaqNksaRZiA5EEI+Ei4I1nO5Jh72wfHlg=
 golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
