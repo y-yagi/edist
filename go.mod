@@ -1,6 +1,6 @@
 module github.com/y-yagi/edist
 
-go 1.13
+go 1.14
 
 require (
 	github.com/google/go-github v17.0.0+incompatible
