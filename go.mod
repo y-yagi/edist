@@ -8,5 +8,5 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/y-yagi/configure v0.3.0
 	github.com/y-yagi/goext v0.6.0
-	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
+	golang.org/x/oauth2 v0.6.0
 )
